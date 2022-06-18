@@ -1,0 +1,5 @@
+web/node_modules
+web/package-lock.json
+web/wordrive
+api/node_modules
+api/package-lock.json
