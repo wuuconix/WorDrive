@@ -1,1 +1,0 @@
-export const mongoURI = "mongodb://wuuconix:wuuconix_wd@localhost:27017/wordrive"
