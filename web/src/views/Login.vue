@@ -10,8 +10,8 @@
                 <el-form-item prop="pass">
                     <el-input v-model="formModel.pass" type="password" :placeholder="passwordPH" show-password clearable/>
                 </el-form-item>
-                <el-button type="primary" @click="register">{{ isLogin ? "登录" : "注册" }}</el-button>
             </el-form>
+            <el-button type="primary" @click="register">{{ isLogin ? "登录" : "注册" }}</el-button>
             <div class="tip">{{ tip }} <span class="register" @click="modeSwtich">{{ isLogin ? "注册" : "登录" }}</span></div>
         </div>
     </div>
