@@ -36,7 +36,11 @@ app.post("/register", (req, res) => {
         userCollection.insertOne({user, pass: md5(pass)}).then(() => {
             res.json({success: "register successfully"})
         }).catch(e => {
-            res.json({error: e.toString()})
+            if (/duplicate key/.test(e.toString())) {
+                res.json({error: `user ${user} is already taken, try others`})
+            } else {
+                res.json({error: e.toString()})
+            }
         })
     }
 })

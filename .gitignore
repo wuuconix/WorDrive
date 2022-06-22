@@ -4,3 +4,4 @@ web/wordrive
 api/node_modules
 api/package-lock.json
 config/api.mjs
+config/web.js

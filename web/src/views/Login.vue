@@ -2,23 +2,38 @@
     <div class="outerWrapper">
         <div class="panelWrapper">
             <img src="https://img-blog.csdnimg.cn/6c673269a2df4998acd481934f259cd9.png">
-            <span>欢迎使用WordDrive。一款由Wuuconix编写的个人网盘</span>
-            <el-input v-model="username" :placeholder="usernamePH" clearable/>
-            <el-input v-model="password" type="password" :placeholder="passwordPH" show-password clearable/>
-            <el-button type="primary">{{ isLogin ? "登录" : "注册" }}</el-button>
+            <span class="desc">欢迎使用WordDrive。一款由Wuuconix编写的个人网盘</span>
+            <el-form ref="form" :rules="formRules" :model="formModel">
+                <el-form-item prop="user">
+                    <el-input v-model="formModel.user" :placeholder="usernamePH" clearable/>
+                </el-form-item>
+                <el-form-item prop="pass">
+                    <el-input v-model="formModel.pass" type="password" :placeholder="passwordPH" show-password clearable/>
+                </el-form-item>
+                <el-button type="primary" @click="register">{{ isLogin ? "登录" : "注册" }}</el-button>
+            </el-form>
             <div class="tip">{{ tip }} <span class="register" @click="modeSwtich">{{ isLogin ? "注册" : "登录" }}</span></div>
         </div>
     </div>
 </template>
 
 <script>
+import { apiBaseURI } from "../../../config/web.js"
+
 export default {
     name: 'Login',
+    inject: ["$message"],
     data() {
         return {
             isLogin: true,
-            username: "",
-            password: ""
+            formModel: {
+                user: "",
+                pass: ""
+            },
+            formRules: {
+                user: [{ required: true, message: "请输入账号"}, { min: 4, max: 20, message: "账号长度需要在4到20位之间"}],
+                pass: [{ required: true, message: "请输入密码"}, { min: 4, max: 20, message: "密码长度需要在6到20位之间"}]
+            }
         }
     },
     methods: {
@@ -26,6 +41,25 @@ export default {
             this.username = ""
             this.password = ""
             this.isLogin = !this.isLogin
+        },
+        login() {
+
+        },
+        register() {
+            this.$refs.form.validate((isValid) => {
+                if (!isValid) return
+                fetch(`${apiBaseURI}/register`, {
+                    method: "POST",
+                    body: new URLSearchParams({user: this.formModel.user, pass: this.formModel.pass })
+                }).then(res => res.json()).then(res => {
+                    console.log(res)
+                    if(res.success) {
+                        this.$message.success(res.success)
+                    } else {
+                        this.$message.error(res.error)
+                    }
+                })
+            })
         }
     },
     computed: {
@@ -72,8 +106,12 @@ export default {
         flex-direction: column;
         align-items: center;
         box-shadow: var(--el-box-shadow);
-        .el-input {
-            padding: 10px 0;
+
+        span.desc {
+            margin-bottom: 15px;
+        }
+        .el-form {
+            width: 100%
         }
     }
     div.tip {

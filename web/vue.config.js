@@ -11,7 +11,10 @@ module.exports = {
             Components({
                 resolvers: [ElementPlusResolver()],
             }),
-        ] 
+        ],
+        devServer: {
+            disableHostCheck: true //防止在开发环境中报类似https://blog.csdn.net/lifachang/article/details/103201799这种错误
+        } 
     },
     productionSourceMap: false,
     outputDir: "wordrive"
