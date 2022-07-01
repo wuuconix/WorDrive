@@ -11,7 +11,7 @@
                     <el-input v-model="formModel.pass" type="password" :placeholder="passwordPH" show-password clearable/>
                 </el-form-item>
             </el-form>
-            <el-button type="primary" @click="register">{{ isLogin ? "登录" : "注册" }}</el-button>
+            <el-button type="primary" @click="isLogin ? login() : register()">{{ isLogin ? "登录" : "注册" }}</el-button>
             <div class="tip">{{ tip }} <span class="register" @click="modeSwtich">{{ isLogin ? "注册" : "登录" }}</span></div>
         </div>
     </div>
@@ -43,7 +43,20 @@ export default {
             this.isLogin = !this.isLogin
         },
         login() {
-
+            this.$refs.form.validate((isValid) => {
+                if (!isValid) return
+                fetch(`${apiBaseURI}/login`, {
+                    method: "POST",
+                    body: new URLSearchParams({user: this.formModel.user, pass: this.formModel.pass })
+                }).then(res => res.json()).then(res => {
+                    console.log(res)
+                    if(res.success) {
+                        this.$message.success(res.success)
+                    } else {
+                        this.$message.error(res.error)
+                    }
+                })
+            })
         },
         register() {
             this.$refs.form.validate((isValid) => {
