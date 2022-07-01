@@ -24,15 +24,22 @@ client.connect().then(async () => {
 const app = express()
 app.use(bodyParser.urlencoded({ extended: false }))
 
+const isValid = (user, pass) => { //判断用户名和密码是否满足基本的要求
+    if (!user || !pass) {
+        return { error: "field user and pass are required" }
+    } else if (user.length < 4 || user.length > 20) {
+        return { error: "field user's length must be between 4 and 20" }
+    } else if (pass.length < 6 || pass.length > 20) {
+        return { error: "field pass's length must be between 6 and 20" }
+    } else {
+        return { ok: "ok" }
+    }
+}
+
 app.post("/register", (req, res) => {
     const { user, pass } = req.body
-    if (!user || !pass) {
-        res.json({error: "field user and pass are required"})
-    } else if (user.length < 4 || user.length > 20) {
-        res.json({error: "field user's length must be between 4 and 20"})
-    } else if (pass.length < 6 || pass.length > 20) {
-        res.json({error: "field pass's length must be between 6 and 20"})
-    } else {
+    const validation = isValid(user, pass)
+    if (validation.ok) {
         userCollection.insertOne({user, pass: md5(pass)}).then(() => {
             res.json({success: "register successfully"})
         }).catch(e => {
@@ -42,6 +49,25 @@ app.post("/register", (req, res) => {
                 res.json({error: e.toString()})
             }
         })
+    } else {
+        res.json(validation)
+    }
+
+})
+
+app.post("/login", (req, res) => {
+    const { user, pass } = req.body
+    const validation = isValid(user, pass)
+    if (validation.ok) {
+        userCollection.findOne({user, pass: md5(pass)}).then(result => {
+            if (result) {
+                res.json({success: "login successfully"})
+            } else {
+                res.json({error: "login failed"})
+            }
+        })
+    } else {
+        res.json(validation)
     }
 })
 
